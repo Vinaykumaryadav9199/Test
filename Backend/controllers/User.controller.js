@@ -17,6 +17,11 @@ const UserRegistration = async (req, res) => {
         if (!Name || !Email || !Password) {
             throw new ApiError(400, "Please fill all the field");
         }
+        const exsitUser = await User.findOne({Email}    );
+        if (exsitUser)
+        {
+            throw new ApiError(400, "You are already Register");
+        }
         const createUser = await User.create({
             Name,
             Email,
@@ -26,14 +31,14 @@ const UserRegistration = async (req, res) => {
             throw new ApiError(500, "Somthing Went wrong");
         }
 
-        const user = await User.findById(createUser._id);
+        const user = await User.findById(createUser._id).select("-Password");
         if (!user) {
             throw new ApiError(500, "Somthing Went wrong");
         }
 
         res.status(201).json(new ApiResponse(201, user));
     } catch (err) {
-        res.json(err.message);
+        res.status(err.statusCode || 500  ).json(err.message);
     }
 };
 

@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
+import axios from "axios"
 
 const Registration = () => {
     const [formdata, setformdata] = useState({})
-    
+
 
     const handelChange = (e) => {
         const name = e.target.name;
@@ -11,13 +12,22 @@ const Registration = () => {
 
     }
 
-    const handelSubmit = (e)=>{
+    const handelSubmit = (e) => {
         e.preventDefault();
+        axios.post("http://localhost:8000/user//registration/api/v1", formdata)
+        .then((res)=>
+        {
+            console.log(res)
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+
         console.log(formdata)
 
-       }
-       
-       
+    }
+
+
 
     return (
         <div className=' flex justify-center items-center mt-5  flex-col '>
@@ -41,7 +51,7 @@ const Registration = () => {
                     <br />
 
                     <button type='submit' className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800'
-                    onClick={handelSubmit}>Save</button>
+                        onClick={handelSubmit}>Save</button>
 
 
                 </form>
