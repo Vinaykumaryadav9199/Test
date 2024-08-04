@@ -2,63 +2,103 @@ import React, { useState } from 'react'
 import axios from "axios"
 
 const Registration = () => {
-    const [formdata, setformdata] = useState({})
+    const [formdata, setFormdata] = useState({
+        Name: '',
+        Email: '',
+        Password: ''
+    });
+    const [file, setFile] = useState(null);
 
-
-    const handelChange = (e) => {
-        const name = e.target.name;
-        const value = e.target.value
-        setformdata(values => ({ ...values, [name]: value }))
-
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormdata(values => ({ ...values, [name]: value }));
     }
 
-    const handelSubmit = (e) => {
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
+    }
+
+    const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post("http://localhost:8000/user//registration/api/v1", formdata)
-        .then((res)=>
-        {
-            console.log(res)
-        })
-        .catch((err)=>{
-            console.log(err)
-        })
 
-        console.log(formdata)
+        const data = new FormData();
+        for (const key in formdata) {
+            data.append(key, formdata[key]);
+        }
+        if (file) {
+            data.append('avatar', file);
+        }
 
+        axios.post("http://localhost:8000/user/registration/api/v1", data, {
+            headers: {
+                'Content-Type': 'multipart/form-data' ,
+            }
+        })
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
+        // how can Access data from FormData object ..... 
+        for (let [key, value] of data.entries()) { 
+            console.log(key, value);}
     }
-
-
 
     return (
-        <div className=' flex justify-center items-center mt-5  flex-col '>
+        <div className='flex justify-center items-center mt-5 flex-col'>
             <div>
-                <h1 className=' text-3xl font-bold'>Welcome to Registration Page</h1>
+                <h1 className='text-3xl font-bold'>Welcome to Registration Page</h1>
             </div>
-            <div className=' mt-5'>
-                <form>
+            <div className='mt-5'>
+                <form onSubmit={handleSubmit}>
                     <label>Name: </label>
                     <br />
-                    <input type='text' placeholder='Entre your name' border="dark-700" onChange={handelChange} name='Name' value={formdata.Name} />
+                    <input
+                        type='text'
+                        placeholder='Enter your name'
+                        onChange={handleChange}
+                        name='Name'
+                        value={formdata.Name}
+                    />
                     <br />
                     <label>Email: </label>
                     <br />
-                    <input type='text' placeholder='Entre your Email' border="dark-700" onChange={handelChange} name='Email' value={formdata.Email} />
+                    <input
+                        type='text'
+                        placeholder='Enter your Email'
+                        onChange={handleChange}
+                        name='Email'
+                        value={formdata.Email}
+                    />
                     <br />
                     <label>Password: </label>
                     <br />
-                    <input type='password' placeholder='Entre your Password' border="dark-700" onChange={handelChange} name='Password' value={formdata.Password} />
+                    <input
+                        type='password'
+                        placeholder='Enter your Password'
+                        onChange={handleChange}
+                        name='Password'
+                        value={formdata.Password}
+                    />
                     <br />
                     <br />
-
-                    <button type='submit' className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800'
-                        onClick={handelSubmit}>Save</button>
-
-
+                    <input
+                        type='file'
+                        name='avatar'
+                        onChange={handleFileChange}
+                    />
+                    <button
+                        type='submit'
+                        className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800'
+                    >
+                        Save
+                    </button>
                 </form>
             </div>
-
         </div>
-    )
+    );
 }
 
-export default Registration
+export default Registration;
